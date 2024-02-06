@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 /*
  * Purpose of this demo is to show the most basic use of sockets with inspiration
@@ -38,7 +40,15 @@ public class SimpleServer
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String greeting = in.readLine();
             System.out.println(greeting);
-            out.println("Hello SimpleClient, Greetings from SimpleServer");
+            LocalDate date = LocalDate.now();
+            LocalTime time = LocalTime.now();
+            //out.println("Hello SimpleClient, Greetings from SimpleServer");
+            String text = String.format("Dags dato er %s og klokken er %s", date, time);
+            String text2 = "Dags dato er %1 og klokken er %2";
+            text2 = text2.replace("%1", date.toString());
+            text2 = text2.replace("%2", time.toString());
+            out.print(text);
+
         }
         catch (IOException e)
         {
