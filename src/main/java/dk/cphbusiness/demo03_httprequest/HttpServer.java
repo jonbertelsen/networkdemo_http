@@ -1,6 +1,10 @@
 package dk.cphbusiness.demo03_httprequest;
 
+import dk.cphbusiness.parsers.HttpRequest;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -17,6 +21,8 @@ public class HttpServer
 
     private Socket clientSocket;
     private PrintWriter out;
+    private BufferedReader in;
+    private HttpRequest httpRequest;
 
     public static void main(String[] args)
     {
@@ -32,18 +38,46 @@ public class HttpServer
         {
             clientSocket = serverSocket.accept(); // wait for client request
             out = new PrintWriter(clientSocket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+            // Read all lines from client in a string
+            StringBuilder httpRequestString = new StringBuilder();
+
+            String inputLine = "";
+
+            while (in.ready())
+            {
+                inputLine = in.readLine();
+                if (inputLine == null || inputLine.isEmpty())
+                {
+                    break;
+                }
+                httpRequestString.append(inputLine).append(System.lineSeparator());
+            }
+
+            HttpRequest httpRequest = new HttpRequest(httpRequestString.toString());
+
+            String responseBody = "<html><head><title>PAUSE!!!</title></head>" +
+                    "<body><h1>Hello World</h1>" +
+                    "<p>Jeg hedder Jon</p>" +
+                    "<p>Her er et nyt link til der hvor vi kom fra: _host_</p>" +
+                    "<p>Her er vores url: _url_</p>" +
+                    "<a href=\"https://dr.dk\">Danmarks Radios hjemmeside</a>" +
+                    "</body></html>";
+
+            String host = httpRequest.getHost();
+
+            responseBody = responseBody.replace("_host_", host);
+            responseBody = responseBody.replace("_url_", httpRequest.getUrl());
 
             String responseHeader = "HTTP/1.1 200 OK" + System.lineSeparator() +
                     "Date: Mon, 23 May 2022 22:38:34 GMT" + System.lineSeparator() +
-                    "Server: Apache/2.4.1 (Unix)\n" +
+                    "Server: Apache/2.4.1 (Unix)" + System.lineSeparator() +
                     "Content-Type: text/html; charset=UTF-8" + System.lineSeparator() +
-                    "Content-Length: 87" + System.lineSeparator() +
+                    "Content-Length: " + responseBody.length() + System.lineSeparator() +
                     "Connection: close" + System.lineSeparator();
 
-            String responseBody = "<html><head><title>hello world</title></head><body><h1>Hello World</h1></body></html>";
-
             out.println(responseHeader);
-            out.println(System.lineSeparator() + System.lineSeparator()); // separate header and payload section
             out.println(responseBody);
         }
         catch (IOException e)
@@ -62,7 +96,7 @@ public class HttpServer
     {
         try
         {
-            System.out.println("Closing down client socket");
+            System.out.println("Closing down client socket on server");
             out.close();
             clientSocket.close();
         }

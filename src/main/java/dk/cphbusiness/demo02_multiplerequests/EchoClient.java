@@ -10,7 +10,7 @@ public class EchoClient
 {
 
     private static final int PORT = 9090;
-    private static final String IP = "127.0.0.1";
+    private static final String IP = "10.83.130.2";
 
     private Socket clientSocket;
     private PrintWriter out;
@@ -21,9 +21,9 @@ public class EchoClient
     {
         EchoClient client = new EchoClient();
         client.startConnection(IP, PORT);
-        client.sendMessage("Hello SimpleServer");
+        client.sendMessage("Hej Nicklas");
         System.out.println("Response 1: " + client.response);
-        client.sendMessage("Second message");
+        client.sendMessage("Vi skal snart hjem");
         System.out.println("Response 2: " + client.response);
         client.sendMessage("bye");
         System.out.println(client.response);

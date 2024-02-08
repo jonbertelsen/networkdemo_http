@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 /*
  * Purpose of this demo is to show how to get the data from the request headers etc.
@@ -136,8 +137,13 @@ public class RequestDataServer
                 break;
             }
             System.out.println("Line: " + line);
-            String[] parts = line.split(":");
-            headers.put(parts[0], parts[1]);
+
+            StringTokenizer headerKeyValue = new StringTokenizer(line, ":");
+            if (headerKeyValue.countTokens() == 2)
+            {
+                headers.put(headerKeyValue.nextToken(), headerKeyValue.nextToken());
+            }
+
         }
         return headers;
     }
