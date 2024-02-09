@@ -57,21 +57,22 @@ public class HttpRequest
             httpMethod = requestLine[0];
             url = requestLine[1];
             httpVersion = requestLine[2];
-
             if (url.contains("?"))
-            {
-                String[] urlParts = url.split("\\?");
-                urlPath = urlParts[0];
-                String[] queryParamPairs = urlParts[1].split("&");
-                for (int i = 0; i < queryParamPairs.length; i++)
-                {
-                    String[] queryPair = queryParamPairs[i].split("=");
-                    queryParams.put(queryPair[0], queryPair[1]);
-                }
-            } else
-            {
+                parseQueryParams();
+            else
                 urlPath = url;
-            }
+        }
+    }
+
+    private void parseQueryParams()
+    {
+        String[] urlParts = url.split("\\?");
+        urlPath = urlParts[0];
+        String[] queryParamPairs = urlParts[1].split("&");
+        for (int i = 0; i < queryParamPairs.length; i++)
+        {
+            String[] queryPair = queryParamPairs[i].split("=");
+            queryParams.put(queryPair[0], queryPair[1]);
         }
     }
 
